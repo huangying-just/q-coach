@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  qcoach-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qcoach-app
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - DATABASE_URL=file:./dev.db
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - PORT=3008
+    volumes:
+      - qcoach-data:/app/prisma
+      - ./logs:/app/logs
+    networks:
+      - qcoach-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3008/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - qcoach-db-init
+
+  qcoach-db-init:
+    build:
+      context: .
+      dockerfile: Dockerfile.db-init
+    container_name: qcoach-db-init
+    volumes:
+      - qcoach-data:/app/prisma
+    networks:
+      - qcoach-network
+    command: ["sh", "-c", "npx prisma db push && npx prisma db seed"]
+
+  # Nginx 反向代理 (可选)
+  qcoach-nginx:
+    image: nginx:alpine
+    container_name: qcoach-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - qcoach-network
+    depends_on:
+      - qcoach-app
+    restart: unless-stopped
+    profiles:
+      - nginx
+
+volumes:
+  qcoach-data:
+    driver: local
+
+networks:
+  qcoach-network:
+    driver: bridge 

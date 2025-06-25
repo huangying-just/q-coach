@@ -1,35 +1,47 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 禁用遥测数据收集，避免连接Google服务器
+  // 基本配置
+  reactStrictMode: true,
+  swcMinify: true,
+  
+  // 禁用遥测
   telemetry: false,
   
-  // 优化构建配置
-  experimental: {
-    // 禁用某些可能触发外部连接的功能
-    serverComponentsExternalPackages: ['prisma', '@prisma/client'],
-  },
+  // 服务器外部包配置（从experimental移出）
+  serverExternalPackages: ['@prisma/client'],
   
-  // 配置图片域名（如果需要）
-  images: {
-    remotePatterns: [
-      // 根据需要添加允许的图片域名
-    ],
+  // 实验性功能
+  experimental: {
+    // 移除已废弃的 serverComponentsExternalPackages
+    // serverComponentsExternalPackages: ['@prisma/client'], // 已移除
   },
   
   // 输出配置
   output: 'standalone',
   
-  // 编译器配置
-  compiler: {
-    // 移除console.log（生产环境）
-    removeConsole: process.env.NODE_ENV === 'production',
+  // 环境变量
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
   
-  // 环境变量配置
-  env: {
-    NEXT_TELEMETRY_DISABLED: '1',
-    PORT: '3008',
+  // 图片配置
+  images: {
+    domains: [],
+  },
+  
+  // 头部配置
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+        ],
+      },
+    ];
   },
 };
 
