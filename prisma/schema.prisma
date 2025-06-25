@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户会话模型
+model Session {  
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // 用户标识 - 添加用户ID字段
+  userId    String?  // 可选字段，便于向后兼容现有数据
+  
+  // 会话基本信息
+  mode      String   // "COACH" or "ASSISTANT"
+  title     String?  // 会话标题，从第一个问题自动生成
+  
+  // 会话统计
+  messageCount    Int @default(0)
+  questionCount   Int @default(0)
+  averageScore    Float?
+  
+  // 关联的消息记录
+  messages Message[]
+  
+  @@map("sessions")
+}
+
+// 消息模型
+model Message {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  // 消息基本信息
+  role      String   // "user" or "assistant"
+  content   String   // 消息内容
+  type      String   // "question", "analysis", "chat", "answer"
+  
+  // 关联会话
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  // 问题分析结果（仅当type为"analysis"时）
+  analysisScore Float?
+  analysisData  Json?  // 存储详细的分析结果
+  
+  @@map("messages")
+}
+
+// 用户统计数据模型
+model UserStats {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // 用户标识
+  userId    String?  // 添加用户ID字段
+  
+  // 统计数据
+  totalSessions      Int     @default(0)
+  totalQuestions     Int     @default(0)
+  totalCoachSessions Int     @default(0)
+  totalChatSessions  Int     @default(0)
+  
+  // 问题质量统计
+  averageScore       Float?
+  bestScore          Float?
+  improvementRate    Float?
+  
+  // 成就统计
+  achievementCounts  Json?   // 存储各种成就的计数
+  
+  @@map("user_stats")
+}

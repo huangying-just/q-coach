@@ -25,7 +25,8 @@ export const QUESTION_ANALYSIS_PROMPT = `
 - **复合问题**: 在一个问题中包含太多不相关的小问题
 - **包含错误假设**: 问题基于一个不正确的假设
 
-**回复格式：**
+**重要：请直接返回JSON对象，不要使用markdown格式或任何其他包装。**
+
 请严格按照以下JSON格式返回分析结果：
 {
   "score": <0-10的整数>,
@@ -40,7 +41,10 @@ export const QUESTION_ANALYSIS_PROMPT = `
 
 如果是好问题(>=7分)，primary_issue可以为null。
 
-记住：你的反馈必须是建设性的、鼓励性的，避免让用户感到被批评。
+记住：
+1. 只返回JSON对象，不要添加任何解释文字
+2. 不要使用markdown代码块格式（不要\`\`\`json\`\`\`）
+3. 你的反馈必须是建设性的、鼓励性的，避免让用户感到被批评
 `;
 
 export const ASSISTANT_MODE_PROMPT = `

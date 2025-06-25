@@ -28,18 +28,99 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
-// 用户历史记录类型
-export interface UserHistory {
+// 会话类型
+export interface Session {
   id: string;
+  mode: AppMode;
+  startTime: Date;
+  endTime?: Date;
   originalQuestion: string;
   analysis?: QuestionAnalysis;
-  chatMessages?: ChatMessage[];
+  chatMessages: ChatMessage[];
   finalAnswer?: string;
-  timestamp: Date;
+  status: SessionStatus;
+}
+
+// 会话状态
+export enum SessionStatus {
+  PENDING = "pending",
+  ANALYZING = "analyzing",
+  CHATTING = "chatting", 
+  COMPLETED = "completed",
+  ABANDONED = "abandoned"
+}
+
+// 用户历史记录类型
+export interface UserHistory {
+  sessions: Session[];
+  totalSessions: number;
+  averageScore: number;
+  lastUpdated: Date;
 }
 
 // 应用模式
 export enum AppMode {
   COACH = "coach", // 教练模式
   ASSISTANT = "assistant" // 助手模式
+}
+
+// 统计数据类型
+export interface Statistics {
+  totalQuestions: number;
+  averageScore: number;
+  scoreHistory: ScoreEntry[];
+  categoryDistribution: CategoryStats[];
+  achievements: Achievement[];
+  streaks: {
+    current: number;
+    longest: number;
+  };
+}
+
+// 评分历史条目
+export interface ScoreEntry {
+  date: Date;
+  score: number;
+  category?: ProblemCategory;
+  mode: AppMode;
+}
+
+// 分类统计
+export interface CategoryStats {
+  category: ProblemCategory;
+  count: number;
+  percentage: number;
+  trend: 'improving' | 'stable' | 'declining';
+}
+
+// 成就类型
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlockedAt?: Date;
+  progress: number; // 0-100
+  target: number;
+}
+
+// 对话状态类型
+export interface ChatState {
+  sessionId: string;
+  messages: ChatMessage[];
+  isAnalyzing: boolean;
+  needsMoreInfo: boolean;
+  collectedInfo: Record<string, any>;
+}
+
+// API响应类型
+export interface AnalysisResponse {
+  analysis: QuestionAnalysis;
+}
+
+export interface ChatResponse {
+  message: string;
+  shouldProvideAnswer: boolean;
+  needsMoreInfo?: boolean;
+  suggestedQuestions?: string[];
 } 
