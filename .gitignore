@@ -1,38 +1,44 @@
-# Dependencies
-node_modules/
-*/node_modules/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Production builds
-*/build/
-*/.next/
-*/out/
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-*/.env
-*/.env.local
-*/.env.development.local
-*/.env.test.local
-*/.env.production.local
+# testing
+/coverage
 
-# Logs
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-*.log
+.pnpm-debug.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# env files (can opt-in for committing if needed)
+.env*
 
-# Coverage directory used by tools like istanbul
-coverage/
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
 # IDE
 .vscode/
@@ -41,23 +47,9 @@ coverage/
 *.swo
 
 # OS generated files
-.DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Next.js specific
-**/.next/
-**/out/
-
-# Vercel
-.vercel
-
-# TypeScript
-*.tsbuildinfo
-
-# Package-lock files (可选，根据团队偏好)
-# package-lock.json 
