@@ -25,7 +25,7 @@ PROJECT_NAME="q-coach"
 APP_DIR="/opt/q-coach"
 SERVICE_USER="qcoach"
 NODE_VERSION="20"
-PORT="3000"
+PORT="3008"
 
 # 函数：打印带颜色的消息
 print_message() {
@@ -271,11 +271,11 @@ module.exports = {
     script: 'npm',
     args: 'start',
     cwd: '$APP_DIR',
-    env: {
-      NODE_ENV: 'production',
-      PORT: $PORT,
-      NEXT_TELEMETRY_DISABLED: 1
-    },
+         env: {
+       NODE_ENV: 'production',
+       PORT: 3008,
+       NEXT_TELEMETRY_DISABLED: 1
+     },
     instances: 1,
     autorestart: true,
     watch: false,
@@ -315,9 +315,9 @@ server {
     access_log /var/log/nginx/${PROJECT_NAME}_access.log;
     error_log /var/log/nginx/${PROJECT_NAME}_error.log;
     
-    # 反向代理到Node.js应用
-    location / {
-        proxy_pass http://127.0.0.1:$PORT;
+         # 反向代理到Node.js应用
+     location / {
+         proxy_pass http://127.0.0.1:3008;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -333,9 +333,9 @@ server {
         proxy_read_timeout 60s;
     }
     
-    # 静态文件缓存
-    location /_next/static/ {
-        proxy_pass http://127.0.0.1:$PORT;
+         # 静态文件缓存
+     location /_next/static/ {
+         proxy_pass http://127.0.0.1:3008;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
     
@@ -392,16 +392,16 @@ start_application() {
 verify_deployment() {
     print_message "$BLUE" "🔍 验证部署状态..."
     
-    # 检查端口监听
-    if netstat -tlnp | grep ":$PORT " > /dev/null; then
-        print_message "$GREEN" "✅ 应用端口 $PORT 正在监听"
-    else
-        print_error "应用端口 $PORT 未在监听"
-    fi
+         # 检查端口监听
+     if netstat -tlnp | grep ":3008 " > /dev/null; then
+         print_message "$GREEN" "✅ 应用端口 3008 正在监听"
+     else
+         print_error "应用端口 3008 未在监听"
+     fi
     
-    # 检查HTTP响应
-    sleep 5
-    if curl -f http://localhost:$PORT > /dev/null 2>&1; then
+         # 检查HTTP响应
+     sleep 5
+     if curl -f http://localhost:3008 > /dev/null 2>&1; then
         print_message "$GREEN" "✅ 应用HTTP响应正常"
     else
         print_message "$YELLOW" "⚠️  应用HTTP响应异常，请检查日志"
@@ -483,8 +483,8 @@ echo ""
 echo "=== Nginx 状态 ==="
 systemctl status nginx --no-pager -l
 echo ""
-echo "=== 端口监听状态 ==="
-netstat -tlnp | grep ":3000"
+ echo "=== 端口监听状态 ==="
+ netstat -tlnp | grep ":3008"
 EOF
     
     # 创建日志查看脚本
@@ -526,7 +526,7 @@ show_completion_info() {
     echo "📍 应用信息:" | tee -a "$LOG_FILE"
     echo "   - 应用目录: $APP_DIR" | tee -a "$LOG_FILE"
     echo "   - 运行用户: $SERVICE_USER" | tee -a "$LOG_FILE"
-    echo "   - 运行端口: $PORT" | tee -a "$LOG_FILE"
+         echo "   - 运行端口: 3008" | tee -a "$LOG_FILE"
     echo "   - 访问地址: http://your-server-ip" | tee -a "$LOG_FILE"
     echo ""
     echo "🔧 管理命令:" | tee -a "$LOG_FILE"

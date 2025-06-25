@@ -118,7 +118,7 @@ DATABASE_URL="file:./production.db"
 
 # 应用配置
 NODE_ENV=production
-PORT=3000
+PORT=3008
 NEXT_TELEMETRY_DISABLED=1
 ```
 
@@ -145,7 +145,7 @@ qcoach-restart
 
 3. **端口被占用**：
    ```bash
-   sudo netstat -tlnp | grep :3000
+   sudo netstat -tlnp | grep :3008
    sudo kill -9 <PID>
    qcoach-restart
    ```

@@ -29,6 +29,7 @@ const nextConfig: NextConfig = {
   // 环境变量配置
   env: {
     NEXT_TELEMETRY_DISABLED: '1',
+    PORT: '3008',
   },
 };
 
